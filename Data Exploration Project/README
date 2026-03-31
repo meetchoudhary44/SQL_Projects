@@ -1,1 +1,41 @@
-# Exploring covid-19 data for vaccinations and deaths in deep 
+# COVID-19 Vaccination & Mortality Data Analysis (SQL)
+
+## 📌 Overview
+This project focuses on analyzing global COVID-19 vaccination and mortality data using SQL to uncover trends, patterns, and key insights from large datasets.
+
+## 🎯 Objective
+- Analyze vaccination progress across countries
+- Examine COVID-19 death trends over time
+- Identify relationships between total cases, deaths, and vaccinations
+- Practice data querying and analytical thinking using SQL
+
+## 🛠 Tools & Technologies
+- SQL (SSMS)
+- Dataset: COVID-19 dataset (Our World in Data / Kaggle)
+
+## 📊 Key Analysis Performed
+- Total cases vs total deaths analysis
+- Vaccination progress by country
+- Death percentage calculation
+- Population vs infection rate comparison
+- Country-wise and global trend analysis using GROUP BY and aggregations
+
+## 🔍 Sample SQL Operations
+- Joins (combining vaccination and death datasets)
+- Aggregate functions (SUM, AVG, COUNT)
+- Window functions
+- Filtering and sorting for trend analysis
+
+## 📈 Key Insights
+- Countries with higher vaccination rates showed improved recovery trends over time
+- Significant variation observed in infection and mortality rates across regions
+- Data highlights the importance of vaccination rollout in controlling death rates
+
+## 📂 Project Structure
+- SQL queries file
+- Raw dataset
+
+## 🚀 Learning Outcome
+- Strengthened SQL skills for real-world data analysis
+- Improved ability to extract insights from large datasets
+- Built foundation for transitioning into dashboarding and visualization tools 
