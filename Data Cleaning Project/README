@@ -29,5 +29,5 @@ This project focuses on cleaning and transforming Nashville housing data using S
 
 ## 📁 Files
 
-- Data Cleaning Portfolio Project Queries.sql – SQL queries used for data cleaning
+- Data_Cleaning_Nashville_Housing.sql – SQL queries used for data cleaning
 - Nashville Housing Data for Data Cleaning.xlsx – Dataset used for the project
