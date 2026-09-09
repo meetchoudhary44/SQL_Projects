@@ -30,6 +30,6 @@ This project explores COVID-19 case, death, population, and vaccination data usi
 
 ## 📁 Files
 
-- SQLQuery1 First Project.sql – SQL queries used for data exploration
+- COVID19_Data_Exploration.sql – SQL queries used for data exploration
 - CovidDeaths.xlsx – COVID-19 deaths and cases dataset
 - CovidVaccinations.xlsx – COVID-19 vaccination dataset
