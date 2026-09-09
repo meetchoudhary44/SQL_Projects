@@ -1,149 +1,300 @@
 /*
+============================================================
+NASHVILLE HOUSING DATA CLEANING
+============================================================
 
-Cleaning Data in SQL Queries
+Skills Used:
+- Data Cleaning
+- Data Type Conversion
+- String Functions
+- Self Joins
+- CASE Statements
+- CTEs
+- Window Functions
+- Duplicate Removal
+- ALTER TABLE / UPDATE
 
+Database:
+portfolio_project
+
+Table:
+NashvilleHousing
+============================================================
 */
 
-select *
-from portfolio_project..NashvilleHousing
 
---Standardize date format (As new column sale_date) :-
+/*
+============================================================
+1. INITIAL DATA EXPLORATION
+============================================================
+*/
 
-	--Validate_date_conversion :-
-		select SaleDate, cast(saledate as date) 
-		from portfolio_project..NashvilleHousing
-	
-alter table Portfolio_Project..NashvilleHousing
-add sale_date date ;
-
-update portfolio_project..NashvilleHousing
-set sale_date = cast(saledate as date)
+SELECT *
+FROM portfolio_project..NashvilleHousing;
 
 
---Populate property address :-
+/*
+============================================================
+2. STANDARDIZE SALE DATE FORMAT
+   Create a new column with the standardized DATE format.
+============================================================
+*/
+
+-- Validate date conversion
+SELECT
+    SaleDate,
+    CAST(SaleDate AS DATE) AS Sale_Date
+FROM portfolio_project..NashvilleHousing;
 
 
-select A.ParcelID,A.PropertyAddress,B.ParcelID,B.PropertyAddress , ISNULL( A.PropertyAddress, B.PropertyAddress )
-from portfolio_project..NashvilleHousing A
-join portfolio_project..NashvilleHousing B
-  on A.ParcelID = B.ParcelID
-  and A.[UniqueID ] <> B.[UniqueID ]
-where A.PropertyAddress is null
-
-update A
-set PropertyAddress =  ISNULL( A.PropertyAddress, B.PropertyAddress )
-from portfolio_project..NashvilleHousing A
-join portfolio_project..NashvilleHousing B
-  on A.ParcelID = B.ParcelID
-  and A.[UniqueID ] <> B.[UniqueID ]
-where A.PropertyAddress is null
-
---Breaking out Address in coloumns (Address, City, State) :-
-
-	-----For Property Address :-
+-- Add standardized date column
+ALTER TABLE portfolio_project..NashvilleHousing
+ADD Sale_Date DATE;
 
 
-		select PropertyAddress
-		from portfolio_project..NashvilleHousing
-
-select
-	Left(PropertyAddress, CHARINDEX(',',PropertyAddress)-1) as address,
-	SUBSTRING(PropertyAddress,CHARINDEX(',',PropertyAddress)+1,len(PropertyAddress)) as city
-from portfolio_project..NashvilleHousing
-
-alter table portfolio_project..NashvilleHousing
-add PropertySplitAddress nvarchar(255) ;
-
-update portfolio_project..NashvilleHousing
-set PropertySplitAddress = SUBSTRING(PropertyAddress,1,CHARINDEX(',',PropertyAddress)-1)
-
-alter table portfolio_project..NashvilleHousing
-add PropertySplitCity nvarchar(255) ;
-
-update portfolio_project..NashvilleHousing
-set PropertySplitCity = SUBSTRING(PropertyAddress,CHARINDEX(',',PropertyAddress)+1,len(PropertyAddress)) 
+-- Populate the new column
+UPDATE portfolio_project..NashvilleHousing
+SET Sale_Date = CAST(SaleDate AS DATE);
 
 
------For Owner Address :-
+/*
+============================================================
+3. POPULATE MISSING PROPERTY ADDRESSES
+   Use ParcelID to find matching property addresses
+   from other records.
+============================================================
+*/
+
+-- Identify records with missing PropertyAddress
+SELECT
+    A.ParcelID,
+    A.PropertyAddress,
+    B.ParcelID,
+    B.PropertyAddress,
+    ISNULL(A.PropertyAddress, B.PropertyAddress) AS Updated_Address
+FROM portfolio_project..NashvilleHousing AS A
+JOIN portfolio_project..NashvilleHousing AS B
+    ON A.ParcelID = B.ParcelID
+    AND A.[UniqueID ] <> B.[UniqueID ]
+WHERE A.PropertyAddress IS NULL;
 
 
-select OwnerAddress
-from portfolio_project..NashvilleHousing
-
-select
-PARSENAME(replace(OwnerAddress,',','.'), 3),
-PARSENAME(replace(OwnerAddress,',','.'), 2),
-PARSENAME(replace(OwnerAddress,',','.'), 1)
-from portfolio_project..NashvilleHousing
-
-alter table Portfolio_Project..NashvilleHousing
-add OwnerSplitAddress nvarchar(255) ;
-
-update portfolio_project..NashvilleHousing
-set OwnerSplitAddress = PARSENAME(replace(OwnerAddress,',','.'), 3)
-
-alter table portfolio_project..NashvilleHousing 
-add OwnerSplitCity nvarchar(255) ;
-
-update portfolio_project..NashvilleHousing
-set OwnerSplitCity = PARSENAME(replace(OwnerAddress,',','.'), 2)
-
-alter table portfolio_project..NashvilleHousing
-add OwnerSplitState nvarchar(255) ;
-
-update portfolio_project..NashvilleHousing
-set OwnerSplitState = PARSENAME(replace(OwnerAddress,',','.'), 1)
+-- Populate missing PropertyAddress values
+UPDATE A
+SET A.PropertyAddress = ISNULL(A.PropertyAddress, B.PropertyAddress)
+FROM portfolio_project..NashvilleHousing AS A
+JOIN portfolio_project..NashvilleHousing AS B
+    ON A.ParcelID = B.ParcelID
+    AND A.[UniqueID ] <> B.[UniqueID ]
+WHERE A.PropertyAddress IS NULL;
 
 
---Change 'y' to yes and 'n' to no in SoldAsVacant :-
+/*
+============================================================
+4. SPLIT PROPERTY ADDRESS INTO SEPARATE COLUMNS
+   Separate PropertyAddress into:
+   - PropertySplitAddress
+   - PropertySplitCity
+============================================================
+*/
+
+-- Review PropertyAddress
+SELECT
+    PropertyAddress
+FROM portfolio_project..NashvilleHousing;
 
 
-select Distinct(SoldAsVacant),COUNT(*) as Record_Count
-from portfolio_project..NashvilleHousing
-group by SoldAsVacant ;
+-- Validate address splitting
+SELECT
+    LEFT(PropertyAddress, CHARINDEX(',', PropertyAddress) - 1) AS Address,
+    SUBSTRING(
+        PropertyAddress,
+        CHARINDEX(',', PropertyAddress) + 1,
+        LEN(PropertyAddress)
+    ) AS City
+FROM portfolio_project..NashvilleHousing;
 
 
-select SoldAsVacant,
-case when SoldAsVacant = 'Y' then 'Yes'
-     when SoldAsVacant = 'N' then 'No'
-	 else SoldAsVacant
-	 end 
-from portfolio_project..NashvilleHousing
-
-update portfolio_project..NashvilleHousing
-set SoldAsVacant = case when SoldAsVacant = 'Y' then 'Yes'
-     when SoldAsVacant = 'N' then 'No'
-	 else SoldAsVacant
-	 end 
-from portfolio_project..NashvilleHousing
+-- Add PropertySplitAddress column
+ALTER TABLE portfolio_project..NashvilleHousing
+ADD PropertySplitAddress NVARCHAR(255);
 
 
---Identifying and Removing duplicates records based on matchig property,legal-reference attributes and transaction :-
+-- Populate PropertySplitAddress
+UPDATE portfolio_project..NashvilleHousing
+SET PropertySplitAddress =
+    SUBSTRING(
+        PropertyAddress,
+        1,
+        CHARINDEX(',', PropertyAddress) - 1
+    );
 
 
-with RowNumCTE As(
-select * ,
-        ROW_NUMBER()  over (
-		partition by  ParcelID,
-		              LandUse,
-					  PropertyAddress,
-					  SaleDate,
-					  SalePrice,
-					  LegalReference
-					  order by UniqueID ) Row_num
-from portfolio_project..NashvilleHousing
-                        
+-- Add PropertySplitCity column
+ALTER TABLE portfolio_project..NashvilleHousing
+ADD PropertySplitCity NVARCHAR(255);
+
+
+-- Populate PropertySplitCity
+UPDATE portfolio_project..NashvilleHousing
+SET PropertySplitCity =
+    SUBSTRING(
+        PropertyAddress,
+        CHARINDEX(',', PropertyAddress) + 1,
+        LEN(PropertyAddress)
+    );
+
+
+/*
+============================================================
+5. SPLIT OWNER ADDRESS INTO SEPARATE COLUMNS
+   Separate OwnerAddress into:
+   - OwnerSplitAddress
+   - OwnerSplitCity
+   - OwnerSplitState
+============================================================
+*/
+
+-- Review OwnerAddress
+SELECT
+    OwnerAddress
+FROM portfolio_project..NashvilleHousing;
+
+
+-- Validate address splitting
+SELECT
+    PARSENAME(REPLACE(OwnerAddress, ',', '.'), 3) AS Address,
+    PARSENAME(REPLACE(OwnerAddress, ',', '.'), 2) AS City,
+    PARSENAME(REPLACE(OwnerAddress, ',', '.'), 1) AS State
+FROM portfolio_project..NashvilleHousing;
+
+
+-- Add OwnerSplitAddress column
+ALTER TABLE portfolio_project..NashvilleHousing
+ADD OwnerSplitAddress NVARCHAR(255);
+
+
+-- Populate OwnerSplitAddress
+UPDATE portfolio_project..NashvilleHousing
+SET OwnerSplitAddress =
+    PARSENAME(REPLACE(OwnerAddress, ',', '.'), 3);
+
+
+-- Add OwnerSplitCity column
+ALTER TABLE portfolio_project..NashvilleHousing
+ADD OwnerSplitCity NVARCHAR(255);
+
+
+-- Populate OwnerSplitCity
+UPDATE portfolio_project..NashvilleHousing
+SET OwnerSplitCity =
+    PARSENAME(REPLACE(OwnerAddress, ',', '.'), 2);
+
+
+-- Add OwnerSplitState column
+ALTER TABLE portfolio_project..NashvilleHousing
+ADD OwnerSplitState NVARCHAR(255);
+
+
+-- Populate OwnerSplitState
+UPDATE portfolio_project..NashvilleHousing
+SET OwnerSplitState =
+    PARSENAME(REPLACE(OwnerAddress, ',', '.'), 1);
+
+
+/*
+============================================================
+6. STANDARDIZE SOLD AS VACANT VALUES
+   Convert:
+   Y → Yes
+   N → No
+============================================================
+*/
+
+-- Check existing values
+SELECT
+    SoldAsVacant,
+    COUNT(*) AS Record_Count
+FROM portfolio_project..NashvilleHousing
+GROUP BY SoldAsVacant;
+
+
+-- Validate the transformation
+SELECT
+    SoldAsVacant,
+    CASE
+        WHEN SoldAsVacant = 'Y' THEN 'Yes'
+        WHEN SoldAsVacant = 'N' THEN 'No'
+        ELSE SoldAsVacant
+    END AS Standardized_SoldAsVacant
+FROM portfolio_project..NashvilleHousing;
+
+
+-- Apply the transformation
+UPDATE portfolio_project..NashvilleHousing
+SET SoldAsVacant =
+    CASE
+        WHEN SoldAsVacant = 'Y' THEN 'Yes'
+        WHEN SoldAsVacant = 'N' THEN 'No'
+        ELSE SoldAsVacant
+    END;
+
+
+/*
+============================================================
+7. IDENTIFY AND REMOVE DUPLICATE RECORDS
+   Duplicates are identified using:
+   - ParcelID
+   - LandUse
+   - PropertyAddress
+   - SaleDate
+   - SalePrice
+   - LegalReference
+============================================================
+*/
+
+WITH RowNumCTE AS
+(
+    SELECT
+        *,
+        ROW_NUMBER() OVER
+        (
+            PARTITION BY
+                ParcelID,
+                LandUse,
+                PropertyAddress,
+                SaleDate,
+                SalePrice,
+                LegalReference
+            ORDER BY [UniqueID ]
+        ) AS Row_Num
+
+    FROM portfolio_project..NashvilleHousing
 )
-Delete
-from RowNumCTE
-where  Row_num > 1
+
+DELETE
+FROM RowNumCTE
+WHERE Row_Num > 1;
 
 
---Delete Unused Cooumns :-
+/*
+============================================================
+8. REVIEW DATA BEFORE REMOVING UNUSED COLUMNS
+============================================================
+*/
+
+SELECT *
+FROM portfolio_project..NashvilleHousing;
 
 
-select *
-from portfolio_project..NashvilleHousing
+/*
+============================================================
+9. REMOVE UNUSED COLUMNS
+============================================================
+*/
 
-alter table portfolio_project..NashvilleHousing
-drop column PropertyAddress, SaleDate, OwnerAddress  
+ALTER TABLE portfolio_project..NashvilleHousing
+DROP COLUMN
+    PropertyAddress,
+    SaleDate,
+    OwnerAddress;
