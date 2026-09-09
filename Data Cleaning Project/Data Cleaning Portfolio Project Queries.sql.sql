@@ -7,11 +7,12 @@ Cleaning Data in SQL Queries
 select *
 from portfolio_project..NashvilleHousing
 
---Standardize date format (As new col. sale_date) :-
+--Standardize date format (As new column sale_date) :-
 
-select SaleDate, cast(saledate as date) 
-from portfolio_project..NashvilleHousing
-
+	--Validate_date_conversion :-
+		select SaleDate, cast(saledate as date) 
+		from portfolio_project..NashvilleHousing
+	
 alter table Portfolio_Project..NashvilleHousing
 add sale_date date ;
 
@@ -39,15 +40,15 @@ where A.PropertyAddress is null
 
 --Breaking out Address in coloumns (Address, City, State) :-
 
------For Property Addess :-
+	-----For Property Address :-
 
 
-select PropertyAddress
-from portfolio_project..NashvilleHousing
+		select PropertyAddress
+		from portfolio_project..NashvilleHousing
 
 select
-SUBSTRING(PropertyAddress,1,CHARINDEX(',',PropertyAddress)-1) as address,
-SUBSTRING(PropertyAddress,CHARINDEX(',',PropertyAddress)+1,len(PropertyAddress)) as city
+	Left(PropertyAddress, CHARINDEX(',',PropertyAddress)-1) as address,
+	SUBSTRING(PropertyAddress,CHARINDEX(',',PropertyAddress)+1,len(PropertyAddress)) as city
 from portfolio_project..NashvilleHousing
 
 alter table portfolio_project..NashvilleHousing
@@ -97,9 +98,9 @@ set OwnerSplitState = PARSENAME(replace(OwnerAddress,',','.'), 1)
 --Change 'y' to yes and 'n' to no in SoldAsVacant :-
 
 
-select Distinct(SoldAsVacant),COUNT(SoldAsVacant)
+select Distinct(SoldAsVacant),COUNT(*) as Record_Count
 from portfolio_project..NashvilleHousing
-group by SoldAsVacant
+group by SoldAsVacant ;
 
 
 select SoldAsVacant,
@@ -117,7 +118,7 @@ set SoldAsVacant = case when SoldAsVacant = 'Y' then 'Yes'
 from portfolio_project..NashvilleHousing
 
 
---Remove Dublicates :-
+--Identifying and Removing duplicates records based on matchig property,legal-reference attributes and transaction :-
 
 
 with RowNumCTE As(
@@ -138,11 +139,11 @@ from RowNumCTE
 where  Row_num > 1
 
 
---Delete Unused Coloumns :-
+--Delete Unused Cooumns :-
 
 
 select *
 from portfolio_project..NashvilleHousing
 
 alter table portfolio_project..NashvilleHousing
-drop column PropertyAddress, SaleDate, OwnerAddress, TaxDistrict  
+drop column PropertyAddress, SaleDate, OwnerAddress  
