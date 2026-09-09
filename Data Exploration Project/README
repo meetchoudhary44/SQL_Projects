@@ -1,41 +1,35 @@
-# COVID-19 Vaccination & Mortality Data Analysis (SQL)
+# COVID-19 Data Exploration
 
-## 📌 Overview
-This project focuses on analyzing global COVID-19 vaccination and mortality data using SQL to uncover trends, patterns, and key insights from large datasets.
+## 📌 Project Overview
 
-## 🎯 Objective
-- Analyze vaccination progress across countries
-- Examine COVID-19 death trends over time
-- Identify relationships between total cases, deaths, and vaccinations
-- Practice data querying and analytical thinking using SQL
+This project explores COVID-19 case, death, population, and vaccination data using SQL Server to identify trends and calculate key analytical metrics.
 
-## 🛠 Tools & Technologies
-- SQL (SSMS)
-- Dataset: COVID-19 dataset (Our World in Data / Kaggle)
+## 🔍 Analysis Performed
 
-## 📊 Key Analysis Performed
-- Total cases vs total deaths analysis
-- Vaccination progress by country
-- Death percentage calculation
-- Population vs infection rate comparison
-- Country-wise and global trend analysis using GROUP BY and aggregations
+- Analyzed total COVID-19 cases and deaths
+- Calculated death percentage
+- Calculated percentage of population infected
+- Identified countries with the highest infection rates
+- Compared total death counts across countries and continents
+- Calculated global COVID-19 numbers
+- Analyzed population vs. vaccinations
+- Calculated rolling vaccination totals
+- Calculated vaccination rates
 
-## 🔍 Sample SQL Operations
-- Joins (combining vaccination and death datasets)
-- Aggregate functions (SUM, AVG, COUNT)
-- Window functions
-- Filtering and sorting for trend analysis
+## 🛠️ SQL Skills Used
 
-## 📈 Key Insights
-- Countries with higher vaccination rates showed improved recovery trends over time
-- Significant variation observed in infection and mortality rates across regions
-- Data highlights the importance of vaccination rollout in controlling death rates
+- Joins
+- Aggregate Functions
+- CTEs
+- Temporary Tables
+- Window Functions
+- Data Type Conversion
+- Views
+- GROUP BY
+- CASE / Analytical Calculations
 
-## 📂 Project Structure
-- SQL queries file
-- Raw dataset
+## 📁 Files
 
-## 🚀 Learning Outcome
-- Strengthened SQL skills for real-world data analysis
-- Improved ability to extract insights from large datasets
-- Built foundation for transitioning into dashboarding and visualization tools 
+- SQLQuery1 First Project.sql – SQL queries used for data exploration
+- CovidDeaths.xlsx – COVID-19 deaths and cases dataset
+- CovidVaccinations.xlsx – COVID-19 vaccination dataset
