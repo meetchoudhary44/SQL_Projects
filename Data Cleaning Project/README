@@ -1,1 +1,33 @@
-# Data Cleaning for Nashville housing data
+# Data Cleaning – Nashville Housing
+
+## 📌 Project Overview
+
+This project focuses on cleaning and transforming Nashville housing data using SQL Server to make the dataset more consistent and suitable for analysis.
+
+## 🧹 Data Cleaning Tasks
+
+- Standardized the SaleDate format
+- Populated missing property addresses
+- Split property addresses into separate address and city columns
+- Split owner addresses into address, city, and state
+- Standardized SoldAsVacant values
+- Identified and removed duplicate records
+- Removed unused columns
+
+## 🛠️ SQL Skills Used
+
+- Data Type Conversion
+- Joins
+- String Functions
+- CASE Statements
+- ISNULL
+- PARSENAME
+- ROW_NUMBER()
+- CTEs
+- ALTER TABLE
+- UPDATE and DELETE
+
+## 📁 Files
+
+- Data Cleaning Portfolio Project Queries.sql – SQL queries used for data cleaning
+- Nashville Housing Data for Data Cleaning.xlsx – Dataset used for the project
