@@ -1,3 +1,4 @@
+/*
 ============================================================
 COVID-19 DATA EXPLORATION
 ============================================================
@@ -19,12 +20,14 @@ Tables:
 - CovidDeaths
 - CovidVaccinations
 ============================================================
+*/
 
 
-
+/*
 ============================================================
 1. INITIAL DATA EXPLORATION
 ============================================================
+*/
 
 SELECT *
 FROM portfolio_project..CovidDeaths
@@ -32,9 +35,11 @@ WHERE Continent IS NOT NULL
 ORDER BY 3, 4;
 
 
+/*
 ============================================================
 2. SELECTING DATA TO START WITH
 ============================================================
+*/
 
 SELECT
     Location,
@@ -48,10 +53,12 @@ WHERE Continent IS NOT NULL
 ORDER BY Location, Date;
 
 
+/*
 ============================================================
 3. TOTAL CASES VS TOTAL DEATHS
    Calculate the percentage of cases that resulted in death.
 ============================================================
+*/
 
 SELECT
     Location,
@@ -64,10 +71,12 @@ WHERE Continent IS NOT NULL
 ORDER BY Location, Date;
 
 
+/*
 ============================================================
 4. TOTAL CASES VS POPULATION
    Calculate the percentage of the population infected.
 ============================================================
+*/
 
 SELECT
     Location,
@@ -80,9 +89,11 @@ WHERE Continent IS NOT NULL
 ORDER BY Location, Date;
 
 
+/*
 ============================================================
 5. COUNTRIES WITH THE HIGHEST INFECTION RATE
 ============================================================
+*/
 
 SELECT
     Location,
@@ -95,9 +106,11 @@ GROUP BY Location, Population
 ORDER BY Percent_Population_Infected DESC;
 
 
+/*
 ============================================================
 6. COUNTRIES WITH THE HIGHEST DEATH COUNT
 ============================================================
+*/
 
 SELECT
     Location,
@@ -108,9 +121,11 @@ GROUP BY Location
 ORDER BY Total_Death_Count DESC;
 
 
+/*
 ============================================================
 7. CONTINENTS WITH THE HIGHEST DEATH COUNT
 ============================================================
+*/
 
 SELECT
     Continent,
@@ -121,11 +136,13 @@ GROUP BY Continent
 ORDER BY Total_Death_Count DESC;
 
 
+/*
 ============================================================
 8. GLOBAL NUMBERS
    Calculate total cases, total deaths, and global
    death percentage.
 ============================================================
+*/
 
 SELECT
     SUM(New_Cases) AS Total_Cases,
@@ -136,11 +153,13 @@ FROM portfolio_project..CovidDeaths
 WHERE Continent IS NOT NULL;
 
 
+/*
 ============================================================
 9. TOTAL POPULATION VS VACCINATIONS
    Calculate the rolling number of people vaccinated
    for each location.
 ============================================================
+*/
 
 SELECT
     dea.Continent,
@@ -161,11 +180,11 @@ WHERE dea.Continent IS NOT NULL
 ORDER BY dea.Location, dea.Date;
 
 
-
+/*
 ============================================================
 10. USING CTE FOR VACCINATION RATE
 ============================================================
-
+*/
 
 WITH PopvsVac AS
 (
@@ -196,11 +215,11 @@ SELECT
 FROM PopvsVac;
 
 
-
+/*
 ============================================================
 11. USING TEMPORARY TABLE FOR VACCINATION RATE
 ============================================================
-
+*/
 
 DROP TABLE IF EXISTS #PercentPopulationVaccinated;
 
@@ -251,11 +270,11 @@ SELECT
 FROM #PercentPopulationVaccinated;
 
 
-
+/*
 ============================================================
 12. CREATING A VIEW
 ============================================================
-
+*/
 
 CREATE OR ALTER VIEW TotalPopulationVaccinated AS
 
@@ -279,10 +298,11 @@ JOIN portfolio_project..CovidVaccinations AS vac
 WHERE dea.Continent IS NOT NULL;
 
 
+/*
 ============================================================
 13. VIEW RESULTS
 ============================================================
-
+*/
 
 SELECT *
 FROM TotalPopulationVaccinated;
